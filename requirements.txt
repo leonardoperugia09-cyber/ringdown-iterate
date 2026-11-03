@@ -1,0 +1,8 @@
+# Python 3.12 (ringdown 1.1.0 on PyPI requires >=3.11,<3.13)
+ringdown==1.1.0
+jupyterlab
+jupytext
+nbconvert
+ipykernel
+matplotlib
+seaborn

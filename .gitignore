@@ -1,0 +1,13 @@
+.venv/
+data/*.hdf5
+results/*.nc
+papers/*.pdf
+papers/src_*/
+.ipynb_checkpoints/
+__pycache__/
+papers/isi_farr_2022_release/
+data/*.part
+.taste-skill/
+results/scan/
+results/*_log.txt
+results/rerun_*.log
