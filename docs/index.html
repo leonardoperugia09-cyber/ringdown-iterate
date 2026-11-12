@@ -165,8 +165,8 @@ sub { font-size: 0.75em; vertical-align: -0.2em; line-height: 0; }
 /* ---------- the scan ---------- */
 .scan { padding-block: 4rem calc(var(--section) * 0.6); }
 .scan__head { display: grid; grid-template-columns: repeat(12, 1fr); column-gap: var(--gutter); }
-.scan__head h2 { grid-column: 1 / 6; font-size: var(--step-head); }
-.scan__head p { grid-column: 7 / 13; align-self: end; }
+.scan__head h2 { grid-column: 1 / 13; font-size: var(--step-head); }
+.scan__head p { grid-column: 1 / 9; margin-top: 1.5rem; }
 .scan__body { display: grid; grid-template-columns: repeat(12, 1fr); column-gap: var(--gutter); margin-top: 3.5rem; align-items: start; }
 .scan__chart { grid-column: 1 / 9; }
 .scan__chart svg { width: 100%; height: auto; overflow: visible; }
@@ -324,7 +324,7 @@ sub { font-size: 0.75em; vertical-align: -0.2em; line-height: 0; }
     </nav>
     <div class="hero__text">
       <h1 data-rise style="--i:0">Testing a 3.6σ overtone</h1>
-      <p class="hero__lead" data-rise style="--i:1">I re-ran the GW150914 black-hole ringdown analysis on real LIGO data, then moved its start time to see whether the overtone survives.</p>
+      <p class="hero__lead" data-rise style="--i:1">I re-ran the GW150914 black-hole ringdown analysis on real LIGO data, then shifted its start time to check if the overtone survives.</p>
     </div>
   </div>
   <div class="folders" aria-label="Sections">
@@ -346,12 +346,12 @@ sub { font-size: 0.75em; vertical-align: -0.2em; line-height: 0; }
 <main>
 
 <section class="intro wrap" aria-label="Summary">
-  <p data-reveal>Two detectors <img class="thumb" src="assets/ligo-at-hanford-washington-ligo-pic-04.jpg" alt="LIGO Hanford sign in the desert" width="60" height="40">, one chirp <img class="thumb" src="figures/02_whitened.png" alt="Whitened GW150914 chirp" width="60" height="40"> in coloured noise <img class="thumb" src="figures/02_asd_vs_white.png" alt="LIGO noise spectrum" width="60" height="40">, and a claim that its ringdown holds a second, faster tone.</p>
+  <p data-reveal>Two LIGO detectors <img class="thumb" src="assets/ligo-at-hanford-washington-ligo-pic-04.jpg" alt="LIGO Hanford sign in the desert" width="60" height="40">, one gravitational-wave signal <img class="thumb" src="figures/02_whitened.png" alt="Whitened GW150914 chirp" width="60" height="40"> buried in coloured noise <img class="thumb" src="figures/02_asd_vs_white.png" alt="LIGO noise spectrum" width="60" height="40">, and a claim that its ringdown contains a second, faster tone.</p>
   <figure data-reveal style="--i:1">
     <video autoplay muted loop playsinline preload="metadata" poster="assets/exaggerated-effects-of-gravitational-waves-on-earth-poster.jpg" width="854" height="480" aria-label="Animation of a gravitational wave stretching and squeezing the Earth, scale vastly exaggerated">
       <source src="assets/exaggerated-effects-of-gravitational-waves-on-earth.webm" type="video/webm">
     </video>
-    <figcaption>A passing gravitational wave stretches and squeezes the Earth. Scale vastly exaggerated: at LIGO the change is a few ×10⁻²¹. Animation: LIGO Lab Caltech : MIT.</figcaption>
+    <figcaption>A passing gravitational wave stretches and squeezes the spacetime. The scale is vastly exaggerated: at LIGO the change is a few ×10⁻²¹. Animation: LIGO Lab Caltech : MIT.</figcaption>
   </figure>
 </section>
 
@@ -369,8 +369,8 @@ sub { font-size: 0.75em; vertical-align: -0.2em; line-height: 0; }
     </div>
     <div>
       <h2 id="data-h" data-reveal>The signal you can't see</h2>
-      <p class="plate__desc" data-reveal style="--i:1">LIGO's raw strain swings by about 2×10⁻¹⁹, while the ringdown is a few ×10⁻²¹: a hundred times smaller. Real noise is also coloured: thousands of times louder at 10 Hz than at its quietest, 7×10⁻²⁴ /√Hz near 160–215 Hz.</p>
-      <p class="plate__desc" data-reveal style="--i:2">Dividing out that noise frequency by frequency (whitening) makes the chirp appear in both detectors, right at the peak time. All four data files match LIGO's published checksums.</p>
+      <p class="plate__desc" data-reveal style="--i:1">LIGO's raw strain swings by approximately 2×10⁻¹⁹, while the ringdown signal is only of order 10⁻²¹. The signal is therefore buried in much larger detector fluctuations. LIGO's noise also depends on the frequency: its amplitude spectral density reaches a minimum of approximately 7×10⁻²⁴ /√Hz around 160–215 Hz.</p>
+      <p class="plate__desc" data-reveal style="--i:2">Dividing out that noise frequency by frequency (a process called whitening, used to reduce the frequency-dependent character of noise) makes the chirp appear in both detectors, right at the peak time. All four data files match LIGO's published checksums.</p>
     </div>
     <div class="cells">
       <a class="cell cell--ink" href="https://gwosc.org/eventapi/html/GWTC-1-confident/GW150914/v3/">The data on GWOSC</a>
@@ -382,15 +382,15 @@ sub { font-size: 0.75em; vertical-align: -0.2em; line-height: 0; }
 <section class="method wrap" id="method" aria-labelledby="method-h">
   <div class="method__head">
     <h2 id="method-h" data-reveal>Noise in, posterior out</h2>
-    <p data-reveal style="--i:1">The <a href="https://github.com/maxisi/ringdown">ringdown</a> package by Isi &amp; Farr fits damped sinusoids directly in the time domain, using only data after the start time. I ran it twice: the fundamental mode alone, then with the first overtone. With the docs' settings my fit gives M = 72.3 ± 8.1 M<sub>⊙</sub> and χ = 0.68 ± 0.16; the docs page reports 72.1 ± 8.2 and 0.68 ± 0.17.</p>
+    <p data-reveal style="--i:1">I used the Isi–Farr <a href="https://github.com/maxisi/ringdown">ringdown</a> package to fit damped sinusoids directly to the time-domain LIGO data. I compared two models: one containing only the fundamental 220 mode and another including the first overtone, 221. Using the package's reference settings, I obtained a remnant mass of M=72.3 ± 8.1 M⊙ and a dimensionless spin of 0.68 ± 0.16, closely matching the documented values of 72.1 ± 8.2 M⊙ and 0.68 ± 0.17.</p>
   </div>
   <svg class="method__diagram diagram--wide" viewBox="0 0 1200 270" role="img" aria-label="Scattered squares are pulled into a narrow ribbon and leave as ordered orange rows: noisy data, conditioned and fitted, become a posterior." id="diagram-wide"></svg>
   <div class="method__flow">
     <svg class="diagram--tall" viewBox="0 0 300 400" aria-hidden="true" id="diagram-tall"></svg>
     <div class="method__cols">
-      <div data-reveal><h3>Whiten</h3><p>Measure each detector's noise from 1024 s away from the event and divide it out. My Build assumed flat white noise; real noise is anything but.</p></div>
-      <div data-reveal style="--i:1"><h3>Fit</h3><p>Two damped sinusoids, 220 and 221, whose frequencies and decay times come from one mass and one spin. Livingston sees them 6.98 ms before Hanford, through its own antenna pattern.</p></div>
-      <div data-reveal style="--i:2"><h3>Sample</h3><p>Four Hamiltonian Monte Carlo chains keep 1,000 draws each: the posterior on mass, spin and both amplitudes. The 220 mode rings at 242 Hz; the overtone fades in 1.5 ms.</p></div>
+      <div data-reveal><h3>Whiten</h3><p>Measure each detector's noise from 1024 s away from the event and divide it out. Unlike my Build, which assumed white noise, this analysis accounts for the frequency-dependent noise.</p></div>
+      <div data-reveal style="--i:1"><h3>Fit</h3><p>I fitted the modes as two damped sinusoids, 220 and 221, whose frequencies and decay times come from one mass and one spin. Livingston receives their signal 6.98 ms before Hanford, through its own antenna pattern.</p></div>
+      <div data-reveal style="--i:2"><h3>Sample</h3><p>Four Hamiltonian Monte Carlo chains keep 1,000 draws each: the posterior on mass, spin and both amplitudes. The 220 mode rings at 242 Hz. The overtone fades in 1.5 ms.</p></div>
     </div>
   </div>
 </section>
@@ -402,7 +402,7 @@ sub { font-size: 0.75em; vertical-align: -0.2em; line-height: 0; }
   </div>
   <div class="tile tile--a" data-reveal>
     <p class="tile__fig nums">2.3σ</p>
-    <p class="tile__cap">How far my overtone amplitude sits from zero (mean ÷ standard deviation). The paper reports 3.6σ with the same measure.</p>
+    <p class="tile__cap">My overtone amplitude has a posterior mean 2.32 standard deviations above zero. The paper reports 3.6σ.</p>
   </div>
   <div class="tile tile--b" data-reveal style="--i:1">
     <p class="tile__fig nums">72.8</p>
@@ -418,8 +418,8 @@ sub { font-size: 0.75em; vertical-align: -0.2em; line-height: 0; }
 
 <section class="scan light wrap" id="scan" aria-labelledby="scan-h">
   <div class="scan__head">
-    <h2 id="scan-h" data-reveal>Move the start time</h2>
-    <p data-reveal style="--i:1">Cotesta et al. 2022 argued the overtone's significance changes when the start time moves by less than a millisecond; Isi &amp; Farr 2022 replied they could not reproduce that. I repeated the same 220 + 221 fit at every start time below. Time is in units of t<sub>M</sub> = GM/c³ = 0.34 ms, for M = 69 M<sub>⊙</sub>.</p>
+    <h2 id="scan-h" data-reveal>How Start Time Changes The Result</h2>
+    <p data-reveal style="--i:1">Cotesta et al. 2022 argued the overtone's significance changes even when the start time moves by less than a millisecond. Isi &amp; Farr 2022 challenged this interpretation. I repeated the same 220 + 221 fit at every start time below. Time is in units of t<sub>M</sub> = GM/c³ = 0.34 ms, for M = 69 M⊙.</p>
   </div>
   <div class="scan__body">
     <figure class="scan__chart" data-reveal>
@@ -439,9 +439,9 @@ sub { font-size: 0.75em; vertical-align: -0.2em; line-height: 0; }
     </div>
     <p class="scan__caption" id="scan-caption">Orange: my significance at each start time. Grey bands: where Cotesta et al. 2022 place the true peak (±1σ dark, ±2σ light). Black star: the 3.6σ of Isi et al. 2019. Drag the slider, or use the arrow keys, to read any start time.</p>
     <div class="scan__findings" id="findings">
-      <div data-reveal><h3>Smooth, not jumpy</h3><p>The significance falls steadily from 3.7σ at −2 t<sub>M</sub> to 1.6σ at +2 t<sub>M</sub>. Start times 0.07 ms apart never differ by more than about 0.35σ, so I do not see the sharp dip just before and after the paper’s t₀ that Cotesta et al. reported.</p></div>
-      <div data-reveal style="--i:1"><h3>As big as the noise</h3><p>Inside Cotesta’s ±1σ range for where the peak really is, the answer runs from 3.3σ down to 1.6σ. That spread is wider than the ±1σ scatter Isi &amp; Farr got by repeating the analysis on different stretches of noise.</p></div>
-      <div data-reveal style="--i:2"><h3>3.6σ needs an early start</h3><p>My fit only reaches the paper’s 3.6σ when it starts 1.6 t<sub>M</sub> (0.54 ms) or more before the paper’s t₀, about where Isi &amp; Farr see the Kerr model start to break down. Later, the remnant mass drifts from 76 to 66 M⊙.</p></div>
+      <div data-reveal><h3>Smooth, not jumpy</h3><p>I found that the significance decreases from 3.7σ at −2 t<sub>M</sub> to 1.6σ at +2 t<sub>M</sub>. Start times 0.07 ms apart never differ by more than about 0.35σ, therefore I do not see the sharp dip just before and after the paper's t₀ that Cotesta et al. reported.</p></div>
+      <div data-reveal style="--i:1"><h3>As big as the noise</h3><p>Inside Cotesta's ±1σ range for where the peak really is, the answer runs from 3.3σ down to 1.6σ. That spread is wider than the ±1σ scatter Isi &amp; Farr got by repeating the analysis on different stretches of noise.</p></div>
+      <div data-reveal style="--i:2"><h3>3.6σ needs an early start</h3><p>My fit only reaches the paper's 3.6σ when it starts 1.6 t<sub>M</sub> (0.54 ms) or more before the paper's t₀, about where Isi &amp; Farr see the Kerr model start to break down. Later, the remnant mass drifts from 76 to 66 M⊙.</p></div>
     </div>
   </div>
 </section>
@@ -485,17 +485,17 @@ sub { font-size: 0.75em; vertical-align: -0.2em; line-height: 0; }
 <section class="limits light wrap" id="limits" aria-labelledby="limits-h">
   <div class="limits__head">
     <h2 id="limits-h" data-reveal>What this can't show</h2>
-    <p data-reveal style="--i:1">Modelling choices move the answer. Here is how far my result can be trusted.</p>
+    <p data-reveal style="--i:1">Modelling choices change the answer. Here is how far my result can be trusted.</p>
     <img class="limits__pic" src="assets/interior-of-ligo-at-hanford-washington-ligo.jpg" alt="Inside LIGO Hanford: a vacuum chamber on blue supports where the laser beam tubes meet" width="1920" height="1009" loading="lazy">
   </div>
   <div class="limits__list">
     <details class="qa" name="qa" open>
       <summary><span>Why 2.3σ, not the paper's 3.6σ?</span><span class="qa__pm" aria-hidden="true"></span></summary>
-      <div class="qa__a"><p>Same event, same start time, same two-tone Kerr model, but not the same pipeline. I estimate the noise from the whole 4096 s file with ringdown 1.1.0's defaults (the 2019 paper used 64 s of off-source data), sample with numpyro's Hamiltonian Monte Carlo in single precision (the paper used kombine), and use a different amplitude prior. Cotesta et al. 2022 found that differences like these give "moderately different overtone amplitudes", and a third reanalysis they cite found 1.8σ. I did not test which difference matters most.</p></div>
+      <div class="qa__a"><p>Same event, same start time, same two-mode Kerr model. However, my computational pipeline differs from the original analysis. I estimate the noise using the 4096-second data file and the defaults of ringdown 1.1.0, whereas the 2019 analysis used 64 seconds of off-source data. I also use NumPyro's Hamiltonian Monte Carlo sampler instead of kombine, together with a different amplitude prior and single-precision calculations. These differences may contribute to the discrepancy between 2.3σ and 3.6σ, but I have not isolated the effect of each one.</p></div>
     </details>
     <details class="qa" name="qa">
       <summary><span>So was the paper wrong?</span><span class="qa__pm" aria-hidden="true"></span></summary>
-      <div class="qa__a"><p>My result cannot say that. Isi &amp; Farr 2022 injected a GW150914-like signal into real LIGO noise near the event and got about 3.5σ on average, with scatter of about ±1σ from one noise stretch to the next. On that yardstick 2.3σ and 3.6σ are not very far apart: both could come from the same real overtone, or from noise.</p></div>
+      <div class="qa__a"><p>My result cannot establish that. Isi &amp; Farr 2022 injected a GW150914-like signal into real LIGO noise near the event and got about 3.5σ on average, with scatter of about ±1σ from one noise stretch to the next. On that yardstick 2.3σ and 3.6σ are not very far apart: they could both come from the same real overtone, or from noise.</p></div>
     </details>
     <details class="qa" name="qa">
       <summary><span>Does the start time matter?</span><span class="qa__pm" aria-hidden="true"></span></summary>
@@ -511,7 +511,7 @@ sub { font-size: 0.75em; vertical-align: -0.2em; line-height: 0; }
     </details>
     <details class="qa" name="qa">
       <summary><span>What changed from my Build?</span><span class="qa__pm" aria-hidden="true"></span></summary>
-      <div class="qa__a"><p>In the Build I fitted damped sinusoids to simulated data in white noise, with least squares and Fisher-matrix error bars. Here the data are real, from two detectors, the noise is coloured and measured from the data, and the answer is a full posterior sampled with Hamiltonian Monte Carlo rather than one best fit with an error bar.</p></div>
+      <div class="qa__a"><p>In the Build I fitted damped sinusoids to simulated data in white noise, with least squares and Fisher-matrix error bars. Here the data are real, from two detectors, noise is coloured and measured from the data itself, and the answer is a full posterior sampled with Hamiltonian Monte Carlo rather than one best fit with an error bar.</p></div>
     </details>
     <details class="qa" name="qa">
       <summary><span>What is left out?</span><span class="qa__pm" aria-hidden="true"></span></summary>
