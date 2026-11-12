@@ -79,8 +79,10 @@ A full run on my laptop (Intel i5-1345U, 16 GB, WSL Ubuntu): data download
 ~15 min, Step 2 ~15 min, Step 3 ~30 min, Step 4 ~7 min, the 37-point scan
 ~1.5 h when nothing else is running. One fit needs ~4 GB of RAM.
 
-The project page is [docs/index.html](docs/index.html) (open it in a browser;
-it has an interactive start-time slider fed by the real scan).
+The project page is live at
+**https://leonardoperugia09-cyber.github.io/ringdown-iterate/** (source:
+[docs/index.html](docs/index.html)); it has an interactive start-time slider
+fed by the real scan.
 
 ## Results
 
