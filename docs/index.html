@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#18191b">
 <title>Ringdown Iterate</title>
 <meta name="description" content="A student's reproduction of the GW150914 ringdown overtone analysis on real LIGO data, with a scan over the analysis start time.">
 <script>document.documentElement.classList.add('js')</script>
@@ -11,6 +12,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root {
+  color-scheme: dark;
   --bg: #18191b;
   --surface: #222427;
   --surface-2: #2c2f33;
@@ -40,7 +42,7 @@
   --env-corner: polygon(0 0, 55% 0, 60% 5.5%, 65% 9.3%, 70% 11.8%, 75% 13.5%, 80% 14.6%, 85% 15.4%, 90% 15.9%, 95% 16.2%, 100% 16.4%, 100% 100%, 0 100%);
   --env-wide: polygon(0 0, 10% 9%, 20% 16%, 30% 21.5%, 40% 25.7%, 50% 29%, 60% 31.5%, 70% 33.4%, 80% 34.9%, 90% 36%, 100% 36.9%, 100% 100%, 0 100%);
 
-  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
   --ease-soft: cubic-bezier(0.33, 1, 0.68, 1);
   --t-press: 140ms;
   --t-hover: 180ms;
@@ -48,7 +50,8 @@
 }
 
 *, *::before, *::after { box-sizing: border-box; }
-html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; scrollbar-color: #4b4f55 var(--bg); }
+a, button, summary, input { touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
 body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font); font-size: var(--step-body); line-height: 1.5; -webkit-font-smoothing: antialiased; }
 h1, h2, h3, p, figure, ul, ol, dl, dd { margin: 0; }
 ul[class], ol[class] { padding: 0; list-style: none; }
@@ -74,6 +77,11 @@ sub { font-size: 0.75em; vertical-align: -0.2em; line-height: 0; }
 .button { display: inline-flex; align-items: flex-end; justify-content: flex-start; min-height: 3.6rem; padding: 1.1rem 1.6rem 0.8rem; background: var(--accent); color: var(--accent-ink); font-weight: 700; text-decoration: none; clip-path: var(--env-corner); transition: transform var(--t-press) var(--ease-out), background-color var(--t-hover) ease; }
 .button:hover { background: #ff6a45; }
 .button:active { transform: scale(0.97); }
+.button:focus-visible { outline: 3px solid currentColor; outline-offset: -7px; }
+
+.skip { position: absolute; left: var(--margin); top: 0.75rem; z-index: 20; padding: 0.7rem 1.1rem; background: var(--accent); color: var(--accent-ink); font-weight: 700; text-decoration: none; transform: translateY(-160%); transition: transform var(--t-ui) var(--ease-out); }
+.skip:focus-visible { transform: none; outline-color: var(--ink); }
+main:focus { outline: none; }
 
 /* ---------- top bar ---------- */
 .bar { position: relative; z-index: 3; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; height: 4.5rem; }
@@ -92,7 +100,8 @@ sub { font-size: 0.75em; vertical-align: -0.2em; line-height: 0; }
 .folder__body { position: absolute; inset: 40px 0 0; background: var(--c); }
 .folder__tab { position: absolute; top: 0; left: var(--x); width: clamp(9.5rem, 17vw, 15rem); height: 41px; background: var(--c); clip-path: var(--env-tab); }
 .folder__name { position: absolute; top: 4px; left: calc(var(--x) + 0.9rem); font-size: var(--step-body); font-weight: 700; color: var(--t, var(--ink)); white-space: nowrap; transition: transform var(--t-ui) var(--ease-out); }
-.folder:hover .folder__name, .folder:focus-visible .folder__name { transform: translateY(-3px); }
+.folder:focus-visible .folder__name { transform: translateY(-3px); }
+@media (hover: hover) and (pointer: fine) { .folder:hover .folder__name { transform: translateY(-3px); } }
 .folder:nth-child(1) { top: 0; --c: #2c2f33; --x: 2%; }
 .folder:nth-child(2) { top: 48px; --c: #3a3d42; --x: 22%; }
 .folder:nth-child(3) { top: 96px; --c: #4b4f55; --x: 42%; }
@@ -110,6 +119,14 @@ sub { font-size: 0.75em; vertical-align: -0.2em; line-height: 0; }
 .intro p { grid-column: 1 / 7; }
 .intro figure { grid-column: 8 / 13; }
 .intro video, .intro figure img { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; clip-path: var(--env-corner); background: #000; }
+.clip { position: relative; }
+.clip__toggle { position: absolute; right: 12px; bottom: 12px; width: 44px; height: 44px; display: grid; place-items: center; background: var(--bg); color: var(--ink); transition: transform var(--t-press) var(--ease-out), background-color var(--t-hover) ease; }
+.clip__toggle:active { transform: scale(0.94); }
+.clip__toggle:focus-visible { outline-offset: 2px; }
+@media (hover: hover) and (pointer: fine) { .clip__toggle:hover { background: #000; } }
+.clip__toggle svg { width: 16px; height: 16px; fill: currentColor; }
+.clip__toggle .i-play, .clip__toggle[aria-pressed="true"] .i-pause { display: none; }
+.clip__toggle[aria-pressed="true"] .i-play { display: block; }
 .intro figcaption { margin-top: 0.75rem; font-size: var(--step-small); color: var(--muted); }
 .intro p { font-size: var(--step-lead); line-height: 1.3; font-weight: 600; }
 .thumb { display: inline-block; height: 0.85em; width: 1.25em; vertical-align: -0.1em; margin-inline: 0.12em; object-fit: cover; clip-path: var(--env-corner); background: var(--surface); }
@@ -118,7 +135,9 @@ sub { font-size: 0.75em; vertical-align: -0.2em; line-height: 0; }
 .plate { display: grid; grid-template-columns: 1fr 1fr; min-height: 88svh; }
 .plate__pic { display: grid; place-items: center; padding: 40px; }
 .plate__pic figure { width: 100%; background: #fff; padding: 6% 3% 3%; clip-path: var(--env-corner); }
-.plate__pic img { width: 100%; height: auto; }
+.plate__pic img { width: 100%; height: auto; transition: opacity 160ms var(--ease-out), filter 160ms var(--ease-out); }
+.plate__pic img.is-swapping { opacity: 0; filter: blur(4px); }
+@media (prefers-reduced-motion: reduce) { .plate__pic img { transition: opacity 120ms ease; } .plate__pic img.is-swapping { filter: none; } }
 .plate__text { display: flex; flex-direction: column; justify-content: space-between; gap: 3rem; padding: 40px 40px 40px 0; }
 .tabs { display: flex; gap: 1.75rem; font-size: var(--step-body); }
 .tabs button { color: var(--field-1-muted); font-weight: 600; padding-block: 0.4rem; transition: color var(--t-hover) ease; }
@@ -227,16 +246,19 @@ sub { font-size: 0.75em; vertical-align: -0.2em; line-height: 0; }
 .qa[open] .qa__pm::after { transform: rotate(0deg); }
 .qa__a { padding: 0 24px 24px; max-width: 60ch; }
 .qa__a p { max-width: 52ch; }
-.qa:not([open]):hover { background: var(--field-1-tone-2); }
+@media (hover: hover) and (pointer: fine) { .qa:not([open]):hover { background: var(--field-1-tone-2); } }
+@media (prefers-reduced-motion: no-preference) { .qa[open] .qa__a { animation: qa-in 260ms var(--ease-out); } }
+@keyframes qa-in { from { opacity: 0; transform: translateY(-6px); } }
 
 /* ---------- footer: the mark, built large ---------- */
 .foot { padding-block: 4rem 2.5rem; }
 .mark { display: flex; align-items: flex-end; gap: 4px; height: 34svh; min-height: 13rem; }
-.mark span { flex: 1; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 0.2em; background: var(--h-c, var(--surface-2)); height: var(--h); font-size: var(--step-display); font-weight: 700; line-height: 1; color: var(--bg); }
+.mark span { flex: 1; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 0.2em; background: var(--h-c, var(--surface-2)); height: var(--h); font-size: var(--step-display); font-weight: 700; line-height: 1; color: var(--l, var(--ink)); }
 .foot__cols { display: grid; grid-template-columns: repeat(12, 1fr); column-gap: var(--gutter); margin-top: 56px; font-size: var(--step-small); }
 .foot__cols ul { display: grid; gap: 0.5rem; grid-column: span 3; }
 .foot__cols h3 { font-size: var(--step-small); letter-spacing: 0; margin-bottom: 0.75rem; }
-.foot__cols a { color: var(--muted); text-decoration: none; transition: color var(--t-hover) ease; }
+.foot__cols a { display: inline-block; padding-block: 3px; color: var(--muted); text-decoration: none; transition: color var(--t-hover) ease; }
+.credits a { display: inline; padding-block: 0; text-decoration: underline; text-decoration-color: color-mix(in srgb, currentColor 40%, transparent); text-underline-offset: 0.2em; }
 .foot__cols a:hover { color: var(--ink); }
 .credits { grid-column: 1 / 13; margin-top: 2.5rem; font-size: var(--step-small); color: var(--muted); max-width: none; }
 .foot__last { display: flex; justify-content: space-between; align-items: center; margin-top: 2rem; font-size: var(--step-small); color: var(--muted); gap: 1rem; }
@@ -315,6 +337,7 @@ sub { font-size: 0.75em; vertical-align: -0.2em; line-height: 0; }
 </style>
 </head>
 <body>
+<a class="skip" href="#main">Skip to the content</a>
 
 <header class="hero" id="top">
   <div class="wrap">
@@ -338,34 +361,37 @@ sub { font-size: 0.75em; vertical-align: -0.2em; line-height: 0; }
         <a class="button" href="#scan">Move the start time</a>
       </div>
       <p class="hero__note">GPS 1126259462.423 · two detectors · four Hamiltonian Monte Carlo chains per fit</p>
-      <img class="hero__photo drift" src="assets/ligo-at-hanford-washington-ligo-pic-04.jpg" alt="The LIGO Hanford Observatory sign in the Washington desert, the detector buildings behind it" width="1920" height="1280">
+      <img class="hero__photo drift" fetchpriority="high" src="assets/ligo-at-hanford-washington-ligo-pic-04.jpg" alt="The LIGO Hanford Observatory sign in the Washington desert, the detector buildings behind it" width="1920" height="1280">
     </div>
   </div>
 </header>
 
-<main>
+<main id="main" tabindex="-1">
 
 <section class="intro wrap" aria-label="Summary">
   <p data-reveal>Two LIGO detectors <img class="thumb" src="assets/ligo-at-hanford-washington-ligo-pic-04.jpg" alt="LIGO Hanford sign in the desert" width="60" height="40">, one gravitational-wave signal <img class="thumb" src="figures/02_whitened.png" alt="Whitened GW150914 chirp" width="60" height="40"> buried in coloured noise <img class="thumb" src="figures/02_asd_vs_white.png" alt="LIGO noise spectrum" width="60" height="40">, and a claim that its ringdown contains a second, faster tone.</p>
   <figure data-reveal style="--i:1">
+    <div class="clip">
     <video autoplay muted loop playsinline preload="metadata" poster="assets/exaggerated-effects-of-gravitational-waves-on-earth-poster.jpg" width="854" height="480" aria-label="Animation of a gravitational wave stretching and squeezing the Earth, scale vastly exaggerated">
       <source src="assets/exaggerated-effects-of-gravitational-waves-on-earth.webm" type="video/webm">
     </video>
+    <button class="clip__toggle" type="button" aria-pressed="false" aria-label="Pause the animation"><svg class="i-pause" viewBox="0 0 16 16" aria-hidden="true"><rect x="3" y="2" width="3.5" height="12"/><rect x="9.5" y="2" width="3.5" height="12"/></svg><svg class="i-play" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2l10 6-10 6z"/></svg></button>
+    </div>
     <figcaption>A passing gravitational wave stretches and squeezes the spacetime. The scale is vastly exaggerated: at LIGO the change is a few ×10⁻²¹. Animation: LIGO Lab Caltech : MIT.</figcaption>
   </figure>
 </section>
 
 <section class="plate light" id="data" aria-labelledby="data-h">
   <div class="plate__pic">
-    <figure data-reveal>
+    <figure data-reveal role="tabpanel" id="plate-panel" aria-labelledby="tab-raw">
       <img id="plate-img" src="figures/01_raw_strain.png" alt="Raw LIGO strain around GW150914: slow wiggles, no visible signal" width="1800" height="600">
     </figure>
   </div>
   <div class="plate__text">
     <div class="tabs" role="tablist" aria-label="Views of the data">
-      <button role="tab" aria-selected="true" data-src="figures/01_raw_strain.png" data-alt="Raw LIGO strain around GW150914: slow wiggles, no visible signal">Raw strain</button>
-      <button role="tab" aria-selected="false" data-src="figures/02_asd_vs_white.png" data-alt="Noise amplitude spectrum of H1 and L1 against a flat white-noise line">Noise</button>
-      <button role="tab" aria-selected="false" data-src="figures/02_whitened.png" data-alt="Whitened data: the chirp appears just before t equals zero">Whitened</button>
+      <button role="tab" id="tab-raw" aria-controls="plate-panel" aria-selected="true" tabindex="0" data-src="figures/01_raw_strain.png" data-alt="Raw LIGO strain around GW150914: slow wiggles, no visible signal">Raw strain</button>
+      <button role="tab" id="tab-noise" aria-controls="plate-panel" aria-selected="false" tabindex="-1" data-src="figures/02_asd_vs_white.png" data-alt="Noise amplitude spectrum of H1 and L1 against a flat white-noise line">Noise</button>
+      <button role="tab" id="tab-whitened" aria-controls="plate-panel" aria-selected="false" tabindex="-1" data-src="figures/02_whitened.png" data-alt="Whitened data: the chirp appears just before t equals zero">Whitened</button>
     </div>
     <div>
       <h2 id="data-h" data-reveal>The signal you can't see</h2>
@@ -423,7 +449,7 @@ sub { font-size: 0.75em; vertical-align: -0.2em; line-height: 0; }
   </div>
   <div class="scan__body">
     <figure class="scan__chart" data-reveal>
-      <svg id="chart" viewBox="0 0 800 420" role="img" aria-label="Overtone significance against start time"></svg>
+      <svg id="chart" viewBox="0 0 800 420" role="img" aria-label="Overtone significance against start time" aria-describedby="scan-caption"></svg>
       <noscript><img src="figures/05_significance_vs_start_time.png" alt="Overtone significance against start time" width="1500" height="750"></noscript>
     </figure>
     <div class="scan__panel" data-reveal style="--i:1">
@@ -524,7 +550,7 @@ sub { font-size: 0.75em; vertical-align: -0.2em; line-height: 0; }
 
 <footer class="foot wrap">
   <div class="mark" aria-label="GW150914">
-    <span style="--h:72%;--h-c:#4b4f55">G</span><span style="--h:100%;--h-c:var(--accent)">W</span><span style="--h:61%">1</span><span style="--h:84%;--h-c:#3a3d42">5</span><span style="--h:66%;--h-c:#cfd1d4">0</span><span style="--h:91%">9</span><span style="--h:58%;--h-c:#4b4f55">1</span><span style="--h:78%;--h-c:#3a3d42">4</span>
+    <span style="--h:72%;--h-c:#4b4f55">G</span><span style="--h:100%;--h-c:var(--accent);--l:var(--bg)">W</span><span style="--h:61%">1</span><span style="--h:84%;--h-c:#3a3d42">5</span><span style="--h:66%;--h-c:#cfd1d4;--l:var(--bg)">0</span><span style="--h:91%">9</span><span style="--h:58%;--h-c:#4b4f55">1</span><span style="--h:78%;--h-c:#3a3d42">4</span>
   </div>
   <div class="foot__cols">
     <ul class="foot__list">
@@ -557,10 +583,20 @@ sub { font-size: 0.75em; vertical-align: -0.2em; line-height: 0; }
 
 <script src="scan.js"></script>
 <script>
-// ---------- reduced motion: the clip shows its poster frame instead of playing ----------
+// ---------- the clip: paused under reduced motion, and a pause/play button for everyone ----------
 (() => {
   const v = document.querySelector(".intro video");
-  if (v && matchMedia("(prefers-reduced-motion: reduce)").matches) { v.removeAttribute("autoplay"); v.pause(); }
+  const b = document.querySelector(".clip__toggle");
+  if (!v || !b) return;
+  const sync = () => {
+    b.setAttribute("aria-pressed", String(v.paused));
+    b.setAttribute("aria-label", v.paused ? "Play the animation" : "Pause the animation");
+  };
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches) { v.removeAttribute("autoplay"); v.pause(); }
+  b.addEventListener("click", () => { if (v.paused) v.play().catch(() => {}); else v.pause(); });
+  v.addEventListener("play", sync);
+  v.addEventListener("pause", sync);
+  sync();
 })();
 
 // ---------- reveal once on entering the viewport ----------
@@ -580,15 +616,28 @@ sub { font-size: 0.75em; vertical-align: -0.2em; line-height: 0; }
 (() => {
   const img = document.getElementById('plate-img');
   const tabs = [...document.querySelectorAll('.tabs [role=tab]')];
+  const panel = document.getElementById('plate-panel');
+  let swap = 0;
   const pick = (t) => {
-    tabs.forEach((b) => b.setAttribute('aria-selected', b === t));
-    img.src = t.dataset.src; img.alt = t.dataset.alt;
+    if (t.getAttribute('aria-selected') === 'true') return;
+    tabs.forEach((b) => { b.setAttribute('aria-selected', b === t); b.tabIndex = b === t ? 0 : -1; });
+    panel.setAttribute('aria-labelledby', t.id);
+    const id = ++swap;
+    img.classList.add('is-swapping');
+    setTimeout(() => {
+      if (id !== swap) return;
+      // show the picture again once it loads, or if it fails, so it never stays hidden
+      img.onload = img.onerror = () => { if (id === swap) img.classList.remove('is-swapping'); };
+      img.src = t.dataset.src; img.alt = t.dataset.alt;
+      if (img.complete) img.classList.remove('is-swapping');
+    }, 140);
   };
   tabs.forEach((t, i) => {
     t.addEventListener('click', () => pick(t));
     t.addEventListener('keydown', (e) => {
       const d = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
-      if (d) { const n = tabs[(i + d + tabs.length) % tabs.length]; n.focus(); pick(n); }
+      const n = d ? tabs[(i + d + tabs.length) % tabs.length] : e.key === 'Home' ? tabs[0] : e.key === 'End' ? tabs[tabs.length - 1] : null;
+      if (n) { e.preventDefault(); n.focus(); pick(n); }
     });
   });
 })();
