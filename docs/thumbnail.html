@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Ringdown Iterate thumbnail</title>
+<!-- Source of og-image.png (1280×640, the size GitHub and link previews use).
+     Render: chrome --headless --screenshot=og-image.png --window-size=1280,640 thumbnail.html -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root { --bg: #18191b; --ink: #eff0f1; --muted: #a9abb0; --accent: #ff4a1f; --band-1: #2c2f33; --band-2: #3a3d42; }
+* { box-sizing: border-box; margin: 0; }
+html, body { width: 1280px; height: 640px; overflow: hidden; background: var(--bg); color: var(--ink); font-family: "Nunito", system-ui, sans-serif; }
+.frame { position: relative; width: 1280px; height: 640px; }
+.frame::before { content: ""; position: absolute; inset: 0 0 auto; height: 10px; background: var(--accent); }
+.text { position: absolute; left: 72px; top: 96px; width: 520px; }
+h1 { font-size: 84px; font-weight: 700; line-height: 0.98; letter-spacing: -0.035em; }
+.meta { margin-top: 30px; font-size: 26px; font-weight: 600; color: var(--muted); line-height: 1.35; }
+.meta b { color: var(--ink); font-weight: 700; }
+.chart { position: absolute; right: 56px; top: 74px; width: 560px; height: 400px; }
+.band { position: absolute; left: 0; right: 0; bottom: 0; height: 128px; background: var(--accent);
+  clip-path: polygon(0 0, 10% 9%, 20% 16%, 30% 21.5%, 40% 25.7%, 50% 29%, 60% 31.5%, 70% 33.4%, 80% 34.9%, 90% 36%, 100% 36.9%, 100% 100%, 0 100%); }
+.foot { position: absolute; left: 72px; bottom: 30px; font-size: 22px; font-weight: 700; color: var(--bg); }
+</style>
+</head>
+<body>
+<div class="frame">
+  <div class="text">
+    <h1>Testing a 3.6σ overtone</h1>
+    <p class="meta"><b>GW150914</b> · real LIGO data<br>37 ringdown start times</p>
+  </div>
+  <svg class="chart" id="chart" viewBox="0 0 600 400" aria-hidden="true"></svg>
+  <div class="band"></div>
+  <p class="foot">Ringdown Iterate</p>
+</div>
+<script src="scan.js"></script>
+<script>
+// The real start-time scan: significance (mean ÷ std of the overtone amplitude) vs start time.
+(() => {
+  const S = window.SCAN, svg = document.getElementById('chart');
+  const rows = S.rows.slice().sort((a, b) => a.dt0_M - b.dt0_M);
+  const W = 600, H = 400, L = 44, R = 10, T = 10, B = 40;
+  const x0 = -3, x1 = 4.4, yMax = 4.2;
+  const X = (v) => L + (v - x0) / (x1 - x0) * (W - L - R);
+  const Y = (v) => T + (1 - v / yMax) * (H - T - B);
+  const ns = 'http://www.w3.org/2000/svg';
+  const el = (tag, a, text) => { const e = document.createElementNS(ns, tag); for (const k in a) e.setAttribute(k, a[k]); if (text != null) e.textContent = text; svg.appendChild(e); return e; };
+  const cm = S.cotesta_median_tM, cs = S.cotesta_sigma_tM;
+  el('rect', { x: X(Math.max(x0, cm - 2 * cs)), y: T, width: X(Math.min(x1, cm + 2 * cs)) - X(Math.max(x0, cm - 2 * cs)), height: H - T - B, fill: '#222427' });
+  el('rect', { x: X(cm - cs), y: T, width: X(cm + cs) - X(cm - cs), height: H - T - B, fill: '#2c2f33' });
+  for (let v = 0; v <= 4; v++) el('text', { x: L - 10, y: Y(v) + 6, 'text-anchor': 'end', 'font-size': 18, 'font-weight': 600, fill: '#a9abb0', 'font-family': 'Nunito, sans-serif' }, `${v}σ`);
+  el('rect', { x: L, y: Y(0), width: W - L - R, height: 2, fill: '#4b4f55' });
+  el('rect', { x: X(0) - 1, y: T, width: 2, height: H - T - B, fill: '#4b4f55' });
+  el('polyline', { points: rows.map((r) => `${X(r.dt0_M).toFixed(1)},${Y(r.sig_mean_over_std).toFixed(1)}`).join(' '), fill: 'none', stroke: '#ff4a1f', 'stroke-width': 6, 'stroke-linejoin': 'round', 'stroke-linecap': 'round' });
+  const star = (cx, cy, rr) => { const p = []; for (let k = 0; k < 10; k++) { const a = -Math.PI / 2 + k * Math.PI / 5, q = k % 2 ? rr * 0.45 : rr; p.push(`${(cx + q * Math.cos(a)).toFixed(1)},${(cy + q * Math.sin(a)).toFixed(1)}`); } return p.join(' '); };
+  el('polygon', { points: star(X(0), Y(3.6), 15), fill: '#eff0f1' });
+  el('text', { x: X(0) + 22, y: Y(3.6) + 7, 'font-size': 20, 'font-weight': 700, fill: '#eff0f1', 'font-family': 'Nunito, sans-serif' }, 'paper: 3.6σ');
+  const r0 = rows.find((r) => Math.abs(r.dt0_M) < 1e-9);
+  el('circle', { cx: X(0), cy: Y(r0.sig_mean_over_std), r: 11, fill: '#18191b', stroke: '#ff4a1f', 'stroke-width': 5 });
+  el('text', { x: X(0) - 20, y: Y(r0.sig_mean_over_std) + 40, 'text-anchor': 'end', 'font-size': 20, 'font-weight': 700, fill: '#ff4a1f', 'font-family': 'Nunito, sans-serif' }, `mine: ${r0.sig_mean_over_std.toFixed(1)}σ`);
+})();
+</script>
+</body>
+</html>
